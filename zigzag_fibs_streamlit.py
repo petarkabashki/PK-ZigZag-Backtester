@@ -60,28 +60,6 @@ if data is not None:
     st.sidebar.markdown("---")
 
 
-    highs = data['high'].values
-    lows = data['low'].values
-
-    # Calculate ZigZag
-    high_low_markers, turning_markers = calculate_zigzag(highs, lows, epsilon=epsilon)
-    extreme_points_ix = np.where(high_low_markers != 0)[0]
-    extreme_points = high_low_markers[extreme_points_ix]
-    turning_points_ix = np.where(turning_markers !=0)[0]
-
-    # Calculate Fibonacci Levels
-    fhigh_low_markers, fturning_markers = calculate_zigzag(highs, lows, epsilon=epsilon * 1)
-    running_highs = pd.Series(np.where(fhigh_low_markers == 1, 1, np.nan) * highs).ffill().values
-    running_lows = pd.Series(np.where(fhigh_low_markers == -1, 1, np.nan) * lows).ffill().values
-    diff = running_highs - running_lows
-    fib_matrix = np.outer(diff, fib_levels)
-    fib_levels_array = running_lows[:, np.newaxis] + fib_matrix
-    df_fibs = pd.DataFrame(fib_levels_array, columns=fib_columns, index=data.index)
-
-    # --- Chart Display ---
-    st.subheader('Price Chart with ZigZag and Fibonacci Levels')
-
-
     # Window selection
     max_start_index_widths = max(0, (len(data) - 100) // 100) # Initial calculation with default window_width=100
     window_width = st.slider('Window Width', min_value=100, max_value=len(data) if len(data) > 100 else 100, value=100) # Adjusted max_value for window_width
@@ -89,7 +67,7 @@ if data is not None:
     start_index_widths = st.slider('Start Window', 0, max_start_index_widths, 0) # Slider for window multipliers, default to 0
     ws = start_index_widths * window_width # Calculate window start based on multiplier and width
     ww = window_width
-    wdata = None # Initialize wdata to None
+
 
     st.write("Data Length:", len(data)) # Debugging output
     st.write("Window Width:", window_width) # Debugging output
@@ -101,9 +79,35 @@ if data is not None:
 
     if ws >= 0 and (ws + ww) <= len(data): # Check if window is within data bounds
         wdata = data.iloc[ws:ws+ww].copy() # Adjusted to be inclusive of window_width
+    else:
+        st.warning("Selected window is out of data bounds. Please adjust Start Window or Window Width.")
+        st.stop() # Stop execution if window is out of bounds
+        wdata = pd.DataFrame() # Return empty dataframe to avoid errors
 
-        whighs = wdata.high
-        wlows = wdata.low
+    if not wdata.empty: # Proceed only if wdata is not empty
+        whighs = wdata.high.values # Use wdata
+        wlows = wdata.low.values # Use wdata
+
+        # Calculate ZigZag on windowed data
+        high_low_markers, turning_markers = calculate_zigzag(whighs, wlows, epsilon=epsilon) # Use whighs and wlows
+        extreme_points_ix = np.where(high_low_markers != 0)[0]
+        extreme_points = high_low_markers[extreme_points_ix]
+        turning_points_ix = np.where(turning_markers !=0)[0]
+
+        # Calculate Fibonacci Levels on windowed data
+        fhigh_low_markers, fturning_markers = calculate_zigzag(whighs, wlows, epsilon=epsilon * 1) # Use whighs and wlows
+        running_highs = pd.Series(np.where(fhigh_low_markers == 1, 1, np.nan) * whighs).ffill().values # Use whighs
+        running_lows = pd.Series(np.where(fhigh_low_markers == -1, 1, np.nan) * wlows).ffill().values # Use wlows
+        diff = running_highs - running_lows
+        fib_matrix = np.outer(diff, fib_levels)
+        fib_levels_array = running_lows[:, np.newaxis] + fib_matrix
+        df_fibs = pd.DataFrame(fib_levels_array, columns=fib_columns, index=wdata.index) # Use wdata.index
+
+
+        # --- Chart Display ---
+        st.subheader('Price Chart with ZigZag and Fibonacci Levels')
+
+
         candlestick_ohlc_args={'width': .6 / np.log(len(wdata)) if len(wdata) > 1 else 0.6} # Avoid log(0) error
 
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(20, 10), height_ratios=[2, 1])
@@ -116,21 +120,19 @@ if data is not None:
         ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
         ax1.set_title(f'{base}/{quote} {timeframe} - ZigZag with Fibonacci Levels')
 
-        wturning_points_ix = turning_points_ix[(turning_points_ix >= ws) & (turning_points_ix < ws + ww)] # Adjusted to be within window
-        wextreme_points_ix_window = extreme_points_ix[(extreme_points_ix >= ws) & (extreme_points_ix < ws + ww)] # Filter indices within window
-        wextreme_points = extreme_points[(extreme_points_ix >= ws) & (extreme_points_ix < ws + ww)] # Filter extreme_points using the same window condition
-        wextreme_prices = np.where(wextreme_points == 1, highs[wextreme_points_ix_window], lows[wextreme_points_ix_window]) # Use the filtered index
+        wturning_points_ix = turning_points_ix # Use calculated turning_points_ix for wdata
+        wextreme_points_ix_window = extreme_points_ix # Use calculated extreme_points_ix for wdata
+        wextreme_points = extreme_points # Use calculated extreme_points for wdata
+        wextreme_prices = np.where(wextreme_points == 1, whighs[wextreme_points_ix_window], wlows[wextreme_points_ix_window]) # Use whighs and wlows
 
 
-        ax1.plot(data.index[wextreme_points_ix_window], wextreme_prices, color='purple', label='ZigZag Line', lw=1.5)
+        ax1.plot(wdata.index[wextreme_points_ix_window], wextreme_prices, color='purple', label='ZigZag Line', lw=1.5) # Use wdata.index
         for ix in wturning_points_ix:
-            ax1.axvline(data.index.values[ix], color='gray', linestyle='-', alpha=0.2, lw=3)
+            ax1.axvline(wdata.index.values[ix], color='gray', linestyle='-', alpha=0.2, lw=3) # Use wdata.index
 
-        df_fibs.loc[wdata.index][fib_columns].plot(ax=ax1, linestyle='--', lw=1) # Plot only selected fib columns
+        df_fibs.plot(ax=ax1, linestyle='--', lw=1) # Plot df_fibs calculated for wdata
 
         st.pyplot(fig)
-    else:
-        st.warning("Selected window is out of data bounds. Please adjust Start Window or Window Width.")
 
 
     # --- Compilation Info (for debugging/info) ---
