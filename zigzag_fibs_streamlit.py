@@ -96,7 +96,7 @@ if data is not None:
     # --- Compilation Info (for debugging/info) ---
     cmodule = 'pkindicators'
     compilation_info = f'Compilation command (for reference):\n'
-    compilation_info += f'`clear & rm {cmodule}.so & gcc -shared -o {cmodule}.so -fPIC {cmodule.c -I{sysconfig.get_path("include")} -I{np.get_include()}`'
+    compilation_info += f'`clear & rm {{cmodule}}.so & gcc -shared -o {{cmodule}}.so -fPIC {{cmodule}}.c -I{{sysconfig.get_path("include")}} -I{{np.get_include()}}`'
     st.sidebar.markdown("---")
     st.sidebar.markdown("##### Compilation Info")
     st.sidebar.code(compilation_info, language='shell')
