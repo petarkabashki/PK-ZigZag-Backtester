@@ -111,8 +111,8 @@ COMMON_ARGS=(
     --userdir "$USERDIR"
     --datadir "$DATADIR"
     $CUSTOM_CONFIG
-    -e "$EXCHANGE"
-    --format "$DATA_FORMAT"
+    --exchange "$EXCHANGE"
+    --data-format-ohlcv "$DATA_FORMAT"
 )
 
 
