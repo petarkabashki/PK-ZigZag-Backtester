@@ -69,7 +69,14 @@ if data is not None:
     max_start_index_widths = max(0, (len(data) - 100) // 100) # Initial calculation with default window_width=100
     window_width = st.slider('Window Width', min_value=100, max_value=len(data) if len(data) > 100 else 100, value=100) # Adjusted max_value for window_width
     max_start_index_widths = max(0, (len(data) - window_width) // window_width) # Recalculate max_start_index_widths based on current window_width
-    start_index_widths = st.slider('Start Window', 0, max_start_index_widths, 0) # Slider for window multipliers, default to 0
+
+    col1_window, col2_window = st.columns(2) # Create columns for window sliders
+
+    with col1_window:
+        start_index_widths = st.slider('Start Window', 0, max_start_index_widths, 0) # Slider for window multipliers, default to 0
+    with col2_window:
+        window_width = st.slider('Window Width', min_value=100, max_value=len(data) if len(data) > 100 else 100, value=100) # Adjusted max_value for window_width
+
     ws = start_index_widths * window_width # Calculate window start based on multiplier and width
     ww = window_width
 
