@@ -87,7 +87,8 @@ done
 
 # Convert comma-separated strings to arrays, handling the default pair case
 if [ "$PAIRS" = "$DEFAULT_PAIR" ]; then
-    PAIR_ARRAY=("$DEFAULT_PAIR/$QUOTE_ASSET") # Use default pair with quote asset
+    set -- "$DEFAULT_PAIR/$QUOTE_ASSET" # Set positional parameters
+    PAIR_ARRAY=("$@") # Create array from positional parameters
 else
   IFS=',' read -r -a PAIR_ARRAY_TEMP <<< "$PAIRS"  # Temp array for processing
   PAIR_ARRAY=() # Initialize the final pair array
