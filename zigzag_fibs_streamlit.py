@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="pandas.plotting._matplotlib.core")
+
 import streamlit as st
 import numpy as np
 import pandas as pd
