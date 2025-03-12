@@ -41,6 +41,7 @@ def download_data(ticker, timeframe='1d', start_date=None, end_date=None, output
 
     data.columns = [c[0].lower() for c in data.columns]
     data = data[['open','high','low','close','volume']]
+    #is this a unix timestamp in milliseconds ? AI!
     data.index = data.index.astype('int64') // 10**6
     data.to_csv(output_file, index_label='Date')
     print(f"Data saved to {output_file}")
