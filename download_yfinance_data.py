@@ -40,7 +40,7 @@ def download_data(ticker, timeframe='1d', start_date=None, end_date=None, output
         return
 
     # Flatten column headers
-    data.columns = [f'{col}_{ticker}' if isinstance(col, tuple) else col for col in data.columns]
+    # data.columns = [f'{col}_{ticker}' if isinstance(col, tuple) else col for col in data.columns]
 
 
     data.to_csv(output_file, index_label='Date') # Explicitly label index as Date
