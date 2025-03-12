@@ -89,7 +89,7 @@ if data is not None:
     start_index_widths = st.slider('Start Window', 0, max_start_index_widths, 0) # Slider for window multipliers, default to 0
     ws = start_index_widths * window_width # Calculate window start based on multiplier and width
     ww = window_width
-    wdata = data.iloc[ws:ws+ww].copy() # Adjusted to be inclusive of window_width
+    wdata = None # Initialize wdata to None
 
     st.write("Data Length:", len(data)) # Debugging output
     st.write("Window Width:", window_width) # Debugging output
@@ -99,33 +99,39 @@ if data is not None:
     st.write("Window End (ww):", ww) # Debugging output
 
 
-    whighs = wdata.high
-    wlows = wdata.low
-    candlestick_ohlc_args={'width': .6 / np.log(len(wdata)) if len(wdata) > 1 else 0.6} # Avoid log(0) error
+    if ws >= 0 and (ws + ww) <= len(data): # Check if window is within data bounds
+        wdata = data.iloc[ws:ws+ww].copy() # Adjusted to be inclusive of window_width
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(20, 10), height_ratios=[2, 1])
+        whighs = wdata.high
+        wlows = wdata.low
+        candlestick_ohlc_args={'width': .6 / np.log(len(wdata)) if len(wdata) > 1 else 0.6} # Avoid log(0) error
 
-    wdata['date_num'] = mdates.date2num(wdata.index)
-    ohlc = wdata[['date_num', 'open', 'high', 'low', 'close']].values
-    candlestick_ohlc(ax1, ohlc, colorup='green', colordown='red', alpha=0.8, **candlestick_ohlc_args)
-    ax1.set_ylim(wlows.min()*0.995, whighs.max()*1.005)
-    ax1.xaxis_date()
-    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax1.set_title(f'{base}/{quote} {timeframe} - ZigZag with Fibonacci Levels')
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(20, 10), height_ratios=[2, 1])
 
-    wturning_points_ix = turning_points_ix[(turning_points_ix >= ws) & (turning_points_ix < ws + ww)] # Adjusted to be within window
-    wextreme_points_ix_window = extreme_points_ix[(extreme_points_ix >= ws) & (extreme_points_ix < ws + ww)] # Filter indices within window
-    wextreme_points = extreme_points[(extreme_points_ix >= ws) & (extreme_points_ix < ws + ww)] # Filter extreme_points using the same window condition
-    wextreme_prices = np.where(wextreme_points == 1, highs[wextreme_points_ix_window], lows[wextreme_points_ix_window]) # Use the filtered index
+        wdata['date_num'] = mdates.date2num(wdata.index)
+        ohlc = wdata[['date_num', 'open', 'high', 'low', 'close']].values
+        candlestick_ohlc(ax1, ohlc, colorup='green', colordown='red', alpha=0.8, **candlestick_ohlc_args)
+        ax1.set_ylim(wlows.min()*0.995, whighs.max()*1.005)
+        ax1.xaxis_date()
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        ax1.set_title(f'{base}/{quote} {timeframe} - ZigZag with Fibonacci Levels')
+
+        wturning_points_ix = turning_points_ix[(turning_points_ix >= ws) & (turning_points_ix < ws + ww)] # Adjusted to be within window
+        wextreme_points_ix_window = extreme_points_ix[(extreme_points_ix >= ws) & (extreme_points_ix < ws + ww)] # Filter indices within window
+        wextreme_points = extreme_points[(extreme_points_ix >= ws) & (extreme_points_ix < ws + ww)] # Filter extreme_points using the same window condition
+        wextreme_prices = np.where(wextreme_points == 1, highs[wextreme_points_ix_window], lows[wextreme_points_ix_window]) # Use the filtered index
 
 
-    ax1.plot(data.index[wextreme_points_ix_window], wextreme_prices, color='purple', label='ZigZag Line', lw=1.5)
-    for ix in wturning_points_ix:
-        ax1.axvline(data.index.values[ix], color='gray', linestyle='-', alpha=0.2, lw=3)
+        ax1.plot(data.index[wextreme_points_ix_window], wextreme_prices, color='purple', label='ZigZag Line', lw=1.5)
+        for ix in wturning_points_ix:
+            ax1.axvline(data.index.values[ix], color='gray', linestyle='-', alpha=0.2, lw=3)
 
-    df_fibs.loc[wdata.index][fib_columns].plot(ax=ax1, linestyle='--', lw=1) # Plot only selected fib columns
+        df_fibs.loc[wdata.index][fib_columns].plot(ax=ax1, linestyle='--', lw=1) # Plot only selected fib columns
 
-    st.pyplot(fig)
+        st.pyplot(fig)
+    else:
+        st.warning("Selected window is out of data bounds. Please adjust Start Window or Window Width.")
+
 
     # --- Compilation Info (for debugging/info) ---
     cmodule = 'pkindicators'
