@@ -8,7 +8,7 @@ import sysconfig
 from lib.pkindicators import calculate_zigzag
 from lib.util import load_json_candles
 
-st.set_page_config(layout="wide", theme={"base":"dark"})
+st.set_page_config(layout="wide")
 
 st.title('ZigZag Fibonacci Levels')
 
