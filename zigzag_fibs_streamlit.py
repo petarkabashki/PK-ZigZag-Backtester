@@ -44,6 +44,7 @@ def load_data(exchange, base, quote, timeframe):
 data = None # Initialize data to None
 
 if st.sidebar.button('Load Data'):
+    st.cache_data.clear() # Clear the cache
     data = load_data(exchange, base, quote, timeframe)
 
 if data is not None:
