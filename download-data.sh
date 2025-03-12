@@ -84,7 +84,7 @@ while getopts ":p:t:s:e:x:f:c:q:" opt; do
 done
 
 # --- Data Download Loop ---
-set -x # Enable script tracing - to show each command
+# set -x # Enable script tracing - to show each command
 
 # Handle pairs - if default, use "BTC/USDT", otherwise process comma-separated string
 if [ "$PAIRS" = "$DEFAULT_PAIR" ]; then
