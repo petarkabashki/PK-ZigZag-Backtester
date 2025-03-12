@@ -1,3 +1,4 @@
+#%%
 import yfinance as yf
 import pandas as pd
 import argparse
@@ -39,14 +40,18 @@ def download_data(ticker, timeframe='1d', start_date=None, end_date=None, output
         print(f"No data found for {ticker} with the specified parameters.")
         return
 
-    # Rename columns and select OHLCV order
-    data.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
-    data = data[['Open', 'High', 'Low', 'Close', 'Volume']]
-
-
+    # Flatten column headers
+    # data.columns = [f'{col}_{ticker}' if isinstance(col, tuple) else col for col in data.columns]
+    
+    data.columns = [c[0].lower() for c in data.columns]
+    data = data[['open','high','low','close','volume']]
+    # convert the index to timestamp of the form 1740355200000. AI!
     data.to_csv(output_file, index_label='Date') # Explicitly label index as Date
     print(f"Data saved to {output_file}")
 
+#%%
+
+#%%
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Download asset price data from Yahoo Finance.')
     parser.add_argument('ticker', type=str, help='The ticker symbol (e.g., AAPL)')
