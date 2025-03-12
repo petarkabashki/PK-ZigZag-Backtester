@@ -84,6 +84,7 @@ while getopts ":p:t:s:e:x:f:c:q:" opt; do
 done
 
 # --- Data Download Loop ---
+set -x # Enable script tracing - to show each command
 
 # Handle pairs - if default, use "BTC/USDT", otherwise process comma-separated string
 if [ "$PAIRS" = "$DEFAULT_PAIR" ]; then
@@ -144,12 +145,12 @@ for timeframe in $TIMEFRAME_ARGS; do
     for pair in "${PAIR_LIST[@]}"; do
         echo "Downloading data for pair: $pair, timeframe: $timeframe"
 
-        CURRENT_PAIR="ADA/USDT" # Hardcoded pair for testing - CHANGE THIS LATER if needed
+        CURRENT_PAIR="$pair" # Use pair from loop - no longer hardcoded
 
         # Construct and execute the freqtrade command.
         COMMAND=(freqtrade download-data
             "${COMMON_ARGS[@]}"  # Add the common arguments
-            --pairs "$CURRENT_PAIR" # Use hardcoded pair for now
+            --pairs "$CURRENT_PAIR" # Use pair from loop
             -vvv # Add verbose logging for debugging
             --timeframes "$timeframe"
             $TIMERANGE
