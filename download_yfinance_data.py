@@ -40,7 +40,7 @@ def download_data(ticker, timeframe='1d', start_date=None, end_date=None, output
         return
 
     # Rename columns and select OHLCV order
-    data.columns = ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+    data.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
     data = data[['Open', 'High', 'Low', 'Close', 'Volume']]
 
 
