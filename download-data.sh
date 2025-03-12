@@ -30,12 +30,14 @@ download_data() {
   output_file="data/${ticker}.csv"
 
   echo "Downloading ${ticker} data from ${start_date_str} to ${end_date_str} with interval ${interval}..."
-  wget --quiet "https://query1.finance.yahoo.com/v7/finance/download/${ticker}?period1=${start_timestamp}&period2=${end_timestamp}&interval=${interval}&events=history&includeAdjustedClose=true" -O "${output_file}"
+  wget -S --quiet "https://query1.finance.yahoo.com/v7/finance/download/${ticker}?period1=${start_timestamp}&period2=${end_timestamp}&interval=${interval}&events=history&includeAdjustedClose=true" -O "${output_file}"
 
   if [ $? -eq 0 ]; then
     echo "Data downloaded successfully to ${output_file}"
   else
     echo "Error downloading data for ${ticker}."
+    wget_status=$?
+    echo "wget failed with exit code: $wget_status"
   fi
 }
 
@@ -109,8 +111,8 @@ fi
 # Handle positional arguments if no options were provided for download
 if [ -z "$ticker" ] && [ $# -gt 0 ]; then
   ticker=$1
-  end_date=$(date +%Y-%m-%d)       # Today as end date
-  start_date=$(date -d "yesterday" +%Y-%m-%d) # Yesterday as start date
+  end_date=$(date -d "2 days ago" +%Y-%m-%d)
+  start_date=$(date -d "7 days ago" +%Y-%m-%d)
   interval="1d" # Default interval is daily
   download_data "$ticker" "$start_date" "$end_date" "$interval"
 fi
