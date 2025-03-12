@@ -24,7 +24,10 @@ download_data() {
     return 1
   fi
 
-  output_file="${ticker}.csv"
+  # Create data directory if it doesn't exist
+  mkdir -p data
+
+  output_file="data/${ticker}.csv"
 
   echo "Downloading ${ticker} data from ${start_date_str} to ${end_date_str} with interval ${interval}..."
   wget --quiet "https://query1.finance.yahoo.com/v7/finance/download/${ticker}?period1=${start_timestamp}&period2=${end_timestamp}&interval=${interval}&events=history&includeAdjustedClose=true" -O "${output_file}"
