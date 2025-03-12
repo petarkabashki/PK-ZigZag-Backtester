@@ -38,8 +38,13 @@ def load_data(exchange, base, quote, timeframe):
     except FileNotFoundError:
         st.error(f"Data file not found: {fname}. Please make sure to download the data first.")
         return None
+    return None # Return None in case of error to handle flow properly
 
-data = load_data(exchange, base, quote, timeframe)
+
+data = None # Initialize data to None
+
+if st.sidebar.button('Load Data'):
+    data = load_data(exchange, base, quote, timeframe)
 
 if data is not None:
     # Display data stats in sidebar
