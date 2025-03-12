@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# To run this script, navigate to the directory where you saved it in your terminal,
+# ensure it has execute permissions (chmod +x download-data.sh), and then run it using:
+# ./download-data.sh
+
 # Script to download freqtrade data for multiple pairs and timeframes.
 
 # --- Configuration ---
