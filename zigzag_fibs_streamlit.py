@@ -44,7 +44,6 @@ if data is not None:
     high_low_markers, turning_markers = calculate_zigzag(highs, lows, epsilon=epsilon)
     extreme_points_ix = np.where(high_low_markers != 0)[0]
     extreme_points = high_low_markers[extreme_points_ix]
-    extreme_prices = np.where(extreme_points == 1, highs[extreme_points_ix], lows[extreme_points_ix])
     turning_points_ix = np.where(turning_markers !=0)[0]
 
     # Calculate Fibonacci Levels
@@ -81,11 +80,12 @@ if data is not None:
     ax1.set_title(f'{base}/{quote} {timeframe} - ZigZag with Fibonacci Levels')
 
     wturning_points_ix = turning_points_ix[(turning_points_ix >= ws) & (turning_points_ix < ws + ww)] # Adjusted to be within window
-    wextreme_points_ix = extreme_points_ix[(extreme_points_ix >= ws) & (extreme_points_ix < ws + ww)] # Adjusted to be within window
-    wextreme_points = high_low_markers[wextreme_points_ix]
-    wextreme_prices = np.where(wextreme_points == 1, highs[wextreme_points_ix], lows[extreme_points_ix])
+    wextreme_points_ix_window = extreme_points_ix[(extreme_points_ix >= ws) & (extreme_points_ix < ws + ww)] # Filter indices within window
+    wextreme_points = extreme_points[(extreme_points_ix >= ws) & (extreme_points_ix < ws + ww)] # Filter extreme_points using the same window condition
+    wextreme_prices = np.where(wextreme_points == 1, highs[wextreme_points_ix_window], lows[wextreme_points_ix_window]) # Use the filtered index
 
-    ax1.plot(data.index[wextreme_points_ix], wextreme_prices, color='purple', label='ZigZag Line', lw=1.5)
+
+    ax1.plot(data.index[wextreme_points_ix_window], wextreme_prices, color='purple', label='ZigZag Line', lw=1.5)
     for ix in wturning_points_ix:
         ax1.axvline(data.index.values[ix], color='gray', linestyle='-', alpha=0.2, lw=3)
 
@@ -96,7 +96,7 @@ if data is not None:
     # --- Compilation Info (for debugging/info) ---
     cmodule = 'pkindicators'
     compilation_info = f'Compilation command (for reference):\n'
-    compilation_info += f'`clear & rm {cmodule}.so & gcc -shared -o {cmodule}.so -fPIC {cmodule}.c -I{sysconfig.get_path("include")} -I{np.get_include()}`'
+    compilation_info += f'`clear & rm {cmodule}.so & gcc -shared -o {cmodule}.so -fPIC {cmodule.c -I{sysconfig.get_path("include")} -I{np.get_include()}`'
     st.sidebar.markdown("---")
     st.sidebar.markdown("##### Compilation Info")
     st.sidebar.code(compilation_info, language='shell')
