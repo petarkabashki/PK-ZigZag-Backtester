@@ -38,6 +38,14 @@ def load_data(exchange, base, quote, timeframe):
 
 data = None # Initialize data to None
 
+st.header('Parameters') # Moved header to main panel
+
+epsilon = st.slider('Epsilon', min_value=0.01, max_value=0.1, value=0.05, step=0.01) # Moved epsilon slider to main panel
+fib_levels_input = st.text_input('Fibonacci Levels (comma separated)', '0.0, 0.236, 0.414, 0.382, 0.5, 0.618, 0.786, 1.0') # Moved fib_levels_input to main panel
+fib_levels = np.array([float(f.strip()) for f in fib_levels_input.split(',')])
+fib_columns = [f'fib({fib})' for fib in fib_levels]
+
+
 if st.sidebar.button('Load Data'):
     st.cache_data.clear() # Clear the cache
     data = load_data(exchange, base, quote, timeframe)
@@ -72,13 +80,6 @@ if data is not None:
 
     # --- Chart Display ---
     st.subheader('Price Chart with ZigZag and Fibonacci Levels')
-
-    st.header('Parameters') # Moved header to main panel
-
-    epsilon = st.slider('Epsilon', min_value=0.01, max_value=0.1, value=0.05, step=0.01) # Moved epsilon slider to main panel
-    fib_levels_input = st.text_input('Fibonacci Levels (comma separated)', '0.0, 0.236, 0.414, 0.382, 0.5, 0.618, 0.786, 1.0') # Moved fib_levels_input to main panel
-    fib_levels = np.array([float(f.strip()) for f in fib_levels_input.split(',')])
-    fib_columns = [f'fib({fib})' for fib in fib_levels]
 
 
     # Window selection
