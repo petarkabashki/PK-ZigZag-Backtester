@@ -39,6 +39,15 @@ def load_data(exchange, base, quote, timeframe):
 data = load_data(exchange, base, quote, timeframe)
 
 if data is not None:
+    # Display data stats in sidebar
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("##### Data Stats")
+    st.sidebar.markdown(f"- Rows: {data.shape[0]}")
+    st.sidebar.markdown(f"- Start Date: {data.index.min().strftime('%Y-%m-%d %H:%M')}")
+    st.sidebar.markdown(f"- End Date: {data.index.max().strftime('%Y-%m-%d %H:%M')}")
+    st.sidebar.markdown("---")
+
+
     highs = data['high'].values
     lows = data['low'].values
 
