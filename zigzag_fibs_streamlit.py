@@ -91,6 +91,14 @@ if data is not None:
     ww = window_width
     wdata = data.iloc[ws:ws+ww].copy() # Adjusted to be inclusive of window_width
 
+    st.write("Data Length:", len(data)) # Debugging output
+    st.write("Window Width:", window_width) # Debugging output
+    st.write("Max Start Index Widths:", max_start_index_widths) # Debugging output
+    st.write("Start Index Widths:", start_index_widths) # Debugging output
+    st.write("Window Start (ws):", ws) # Debugging output
+    st.write("Window End (ww):", ww) # Debugging output
+
+
     whighs = wdata.high
     wlows = wdata.low
     candlestick_ohlc_args={'width': .6 / np.log(len(wdata)) if len(wdata) > 1 else 0.6} # Avoid log(0) error
