@@ -102,3 +102,12 @@ if [ -n "$start_date" ] && [ -n "$end_date" ] && [ -n "$ticker" ] ; then
   download_data "$ticker" "$start_date" "$end_date" "$interval"
   unset start_date end_date interval ticker #reset variables
 fi
+
+# Handle positional arguments if no options were provided for download
+if [ -z "$ticker" ] && [ $# -gt 0 ]; then
+  ticker=$1
+  end_date=$(date +%Y-%m-%d)       # Today as end date
+  start_date=$(date -d "yesterday" +%Y-%m-%d) # Yesterday as start date
+  interval="1d" # Default interval is daily
+  download_data "$ticker" "$start_date" "$end_date" "$interval"
+fi
