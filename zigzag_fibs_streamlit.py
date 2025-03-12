@@ -60,7 +60,7 @@ if data is not None:
 
     # Window selection
     start_index = st.slider('Start Index', 0, len(data) - 1, max(0, len(data) - 1000))
-    window_width = st.slider('Window Width', min_value=100, max_value=len(data) - start_index, value=min(400, len(data) - start_index))
+    window_width = st.slider('Window Width', min_value=100, max_value=len(data) - start_index, value=min(200, len(data) - start_index))
     ws = start_index
     ww = window_width
     wdata = data.iloc[ws:ws+ww].copy() # Adjusted to be inclusive of window_width
