@@ -86,7 +86,7 @@ done
 # --- Data Download Loop ---
 
 # Convert comma-separated strings to arrays, handling the default pair case
-if [[ "$PAIRS" == "$DEFAULT_PAIR" ]]; then
+if [ "$PAIRS" = "$DEFAULT_PAIR" ]; then
     PAIR_ARRAY=("$DEFAULT_PAIR/$QUOTE_ASSET") # Use default pair with quote asset
 else
   IFS=',' read -r -a PAIR_ARRAY_TEMP <<< "$PAIRS"  # Temp array for processing
@@ -94,7 +94,14 @@ else
 
   # Iterate through the provided pairs and append the quote asset if necessary.
   for pair in "${PAIR_ARRAY_TEMP[@]}"; do
-      if [[ "$pair" != */* ]]; then # Check if pair already has "/"
+      # Check if pair already has "/" - using simple string matching in sh
+      case "$pair" in
+        */)
+          IS_PAIR_WITH_SLASH=true;;
+        *)
+          IS_PAIR_WITH_SLASH=false;;
+      esac
+      if [ "$IS_PAIR_WITH_SLASH" = "false" ]; then
           PAIR_ARRAY+=("$pair/$QUOTE_ASSET") # Append quote asset
       else
           PAIR_ARRAY+=("$pair") #Use as provided
