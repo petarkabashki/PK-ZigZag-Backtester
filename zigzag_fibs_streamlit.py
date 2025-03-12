@@ -61,9 +61,10 @@ if data is not None:
     st.subheader('Price Chart with ZigZag and Fibonacci Levels')
 
     # Window selection
-    start_index = st.slider('Start Index', 0, len(data) - 1, max(0, len(data) - 1000))
-    window_width = st.slider('Window Width', min_value=100, max_value=len(data) - start_index, value=min(100, len(data) - start_index))
-    ws = start_index
+    max_start_index_widths = max(0, (len(data) - 100) // 100) # Calculate max based on window_width=100 default
+    start_index_widths = st.slider('Start Index (Window Multiplier)', 0, max_start_index_widths, max(0, max_start_index_widths - 1)) # Slider for window multipliers
+    window_width = st.slider('Window Width', min_value=100, max_value=len(data) - (start_index_widths * 100) if len(data) > (start_index_widths * 100) else 100, value=100) # Adjusted max_value for window_width
+    ws = start_index_widths * window_width # Calculate window start based on multiplier and width
     ww = window_width
     wdata = data.iloc[ws:ws+ww].copy() # Adjusted to be inclusive of window_width
 
