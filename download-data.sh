@@ -85,35 +85,20 @@ done
 
 # --- Data Download Loop ---
 
-# Convert comma-separated strings to arrays, handling the default pair case
+# Handle pairs - if default, use "BTC/USDT", otherwise process comma-separated string
 if [ "$PAIRS" = "$DEFAULT_PAIR" ]; then
-    set -- "$DEFAULT_PAIR/$QUOTE_ASSET" # Set positional parameters
-    PAIR_ARRAY=("$@") # Create array from positional parameters
+    PAIR_STRING="$DEFAULT_PAIR/$QUOTE_ASSET"
 else
-  IFS=',' read -r -a PAIR_ARRAY_TEMP <<< "$PAIRS"  # Temp array for processing
-  PAIR_ARRAY=() # Initialize the final pair array
-
-  # Iterate through the provided pairs and append the quote asset if necessary.
-  for pair in "${PAIR_ARRAY_TEMP[@]}"; do
-      # Check if pair already has "/" - using simple string matching in sh
-      case "$pair" in
-        */)
-          IS_PAIR_WITH_SLASH=true;;
-        *)
-          IS_PAIR_WITH_SLASH=false;;
-      esac
-      if [ "$IS_PAIR_WITH_SLASH" = "false" ]; then
-          PAIR_ARRAY+=("$pair/$QUOTE_ASSET") # Append quote asset
-      else
-          PAIR_ARRAY+=("$pair") #Use as provided
-      fi
-  done
+    PAIR_STRING="$PAIRS"
 fi
 
-IFS=',' read -r -a TIMEFRAME_ARRAY <<< "$TIMEFRAMES"
+# Process timeframes into positional parameters
+IFS=',' set -- $TIMEFRAMES
+TIMEFRAME_ARGS="$@"
 
-echo "Downloading data for pairs: ${PAIR_ARRAY[*]}"
-echo "Downloading data for timeframes: ${TIMEFRAME_ARRAY[*]}"
+
+echo "Downloading data for pairs: $PAIR_STRING"
+echo "Downloading data for timeframes: $TIMEFRAMES"
 echo "Using exchange: $EXCHANGE"
 echo "Using data format: $DATA_FORMAT"
 echo "Using timerange: $START_DATE-$END_DATE"
@@ -130,10 +115,13 @@ COMMON_ARGS=(
     --format "$DATA_FORMAT"
 )
 
-# Iterate through timeframes
-for timeframe in "${TIMEFRAME_ARRAY[@]}"; do
-    # Iterate through pairs
-    for pair in "${PAIR_ARRAY[@]}"; do
+
+# Iterate through timeframes (using positional parameters)
+for timeframe in $TIMEFRAME_ARGS; do
+    # Iterate through pairs (handling comma-separated string)
+    IFS=','
+    read -r -a PAIR_LIST <<< "$PAIR_STRING"
+    for pair in "${PAIR_LIST[@]}"; do
         echo "Downloading data for pair: $pair, timeframe: $timeframe"
 
         # Construct and execute the freqtrade command.
