@@ -16,17 +16,12 @@ st.set_page_config(layout="wide")
 st.title('ZigZag Fibonacci Levels')
 
 # Sidebar for user inputs
-st.sidebar.header('Parameters')
+st.sidebar.header('Data Selection')
 
 exchange = st.sidebar.text_input('Exchange', 'binance')
 base = st.sidebar.text_input('Base Asset', 'ETH')
 quote = st.sidebar.text_input('Quote Asset', 'USDT')
 timeframe = st.sidebar.selectbox('Timeframe', ['1d', '4h', '1h', '30m', '15m', '5m', '1m'])
-epsilon = st.sidebar.slider('Epsilon', min_value=0.01, max_value=0.1, value=0.05, step=0.01)
-
-fib_levels_input = st.sidebar.text_input('Fibonacci Levels (comma separated)', '0.0, 0.236, 0.414, 0.382, 0.5, 0.618, 0.786, 1.0')
-fib_levels = np.array([float(f.strip()) for f in fib_levels_input.split(',')])
-fib_columns = [f'fib({fib})' for fib in fib_levels]
 
 
 # Load data
@@ -77,6 +72,14 @@ if data is not None:
 
     # --- Chart Display ---
     st.subheader('Price Chart with ZigZag and Fibonacci Levels')
+
+    st.header('Parameters') # Moved header to main panel
+
+    epsilon = st.slider('Epsilon', min_value=0.01, max_value=0.1, value=0.05, step=0.01) # Moved epsilon slider to main panel
+    fib_levels_input = st.text_input('Fibonacci Levels (comma separated)', '0.0, 0.236, 0.414, 0.382, 0.5, 0.618, 0.786, 1.0') # Moved fib_levels_input to main panel
+    fib_levels = np.array([float(f.strip()) for f in fib_levels_input.split(',')])
+    fib_columns = [f'fib({fib})' for fib in fib_levels]
+
 
     # Window selection
     max_start_index_widths = max(0, (len(data) - 100) // 100) # Calculate max based on window_width=100 default
