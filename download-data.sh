@@ -151,7 +151,7 @@ for timeframe in $TIMEFRAME_ARGS; do
         COMMAND=(freqtrade download-data
             "${COMMON_ARGS[@]}"  # Add the common arguments
             --pairs "$CURRENT_PAIR" # Use pair from loop
-            -vvv # Add verbose logging for debugging
+            # -vvv # Add verbose logging for debugging
             --timeframes "$timeframe"
             $TIMERANGE
         )
