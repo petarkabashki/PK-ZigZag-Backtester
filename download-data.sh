@@ -92,6 +92,26 @@ else
     PAIR_STRING="$PAIRS"
 fi
 
+# Process pairs - append default quote if no quote is provided in PAIRS
+IFS=','
+read -r -a PAIR_LIST_TEMP <<< "$PAIR_STRING"
+PAIR_STRING_WITH_QUOTE=""
+FIRST_PAIR=true
+for pair_temp in "${PAIR_LIST_TEMP[@]}"; do
+    if [[ "$pair_temp" != */* ]]; then # Check if pair already has "/"
+        pair_with_quote="${pair_temp^^}/$QUOTE_ASSET" # Append quote asset and uppercase base
+    else
+        pair_with_quote="$pair_temp" # Use as provided
+    fi
+    if $FIRST_PAIR; then
+        PAIR_STRING_WITH_QUOTE="$pair_with_quote"
+        FIRST_PAIR=false
+    else
+        PAIR_STRING_WITH_QUOTE="$PAIR_STRING_WITH_QUOTE,$pair_with_quote"
+    fi
+done
+PAIR_STRING="$PAIR_STRING_WITH_QUOTE"
+
 # Process timeframes into positional parameters
 IFS=',' set -- $TIMEFRAMES
 TIMEFRAME_ARGS="$@"
@@ -124,10 +144,13 @@ for timeframe in $TIMEFRAME_ARGS; do
     for pair in "${PAIR_LIST[@]}"; do
         echo "Downloading data for pair: $pair, timeframe: $timeframe"
 
+        CURRENT_PAIR="ADA/USDT" # Hardcoded pair for testing - CHANGE THIS LATER if needed
+
         # Construct and execute the freqtrade command.
         COMMAND=(freqtrade download-data
             "${COMMON_ARGS[@]}"  # Add the common arguments
-            --pairs "$pair"
+            --pairs "$CURRENT_PAIR" # Use hardcoded pair for now
+            -vvv # Add verbose logging for debugging
             --timeframes "$timeframe"
             $TIMERANGE
         )
@@ -147,4 +170,5 @@ for timeframe in $TIMEFRAME_ARGS; do
 done
 
 echo "Data download process completed."
+echo "IMPORTANT: Please check the output above for any FREQTRADE ERRORS or WARNINGS!"
 exit 0
