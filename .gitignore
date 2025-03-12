@@ -1,0 +1,5 @@
+.env
+.freqtrade
+data
+.aider.*
+.aider*
