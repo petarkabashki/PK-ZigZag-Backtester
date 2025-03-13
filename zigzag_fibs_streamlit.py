@@ -26,7 +26,7 @@ timeframe = st.sidebar.selectbox('Timeframe', ['1d', '4h', '1h', '30m', '15m', '
 
 # Load data
 @st.cache_data
-def load_data(exchange, base, quote, timeframe):
+def load_data(base, quote, timeframe):
     fname = f'./data/{base}_{quote}-{timeframe}.json'
     try:
         return load_json_candles(fname)
@@ -52,7 +52,7 @@ fib_columns = [f'fib({fib})' for fib in fib_levels]
 
 if st.sidebar.button('Load Data'):
     st.cache_data.clear() # Clear the cache
-    data = load_data(exchange, base, quote, timeframe)
+    data = load_data(base, quote, timeframe)
 
 if data is not None:
     # Display data stats in sidebar
@@ -65,7 +65,9 @@ if data is not None:
 
 
 # Window selection - moved outside the data check to be always active
-if data is not None:
+if data is None:
+    st.markdown('Please load data first.')
+else:
     max_start_index_widths = max(0, (len(data) - 100) // 100) # Initial calculation with default window_width=100
     # max_start_index_widths = max(0, (len(data) - window_width) // window_width) # Recalculate max_start_index_widths based on current window_width # REMOVE THIS LINE - using window_width from slider below
 
