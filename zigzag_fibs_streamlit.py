@@ -98,8 +98,8 @@ else:
         wdata = data.iloc[ws:ws+ww].copy() # Adjusted to be inclusive of window_width
     else:
         st.warning("Selected window is out of data bounds. Please adjust Start Window or Window Width.")
-        st.stop() # Stop execution if window is out of bounds
         wdata = pd.DataFrame() # Return empty dataframe to avoid errors
+
 
     if not wdata.empty: # Proceed only if wdata is not empty
         whighs = wdata.high.values # Use wdata
