@@ -63,13 +63,8 @@ if data is not None:
     st.sidebar.markdown(f"- End Date: {data.index.max().strftime('%Y-%m-%d %H:%M')}")
     st.sidebar.markdown("---")
 
-
-# Window selection - moved outside the data check to be always active
-if data is None:
-    st.markdown('Please load data first.')
-else:
+    # Window selection - moved to be directly under 'if data is not None:'
     max_start_index_widths = max(0, (len(data) - 100) // 100) # Initial calculation with default window_width=100
-    # max_start_index_widths = max(0, (len(data) - window_width) // window_width) # Recalculate max_start_index_widths based on current window_width # REMOVE THIS LINE - using window_width from slider below
 
     col1_window, col2_window = st.columns(2) # Create columns for window sliders
 
