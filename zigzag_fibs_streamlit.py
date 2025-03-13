@@ -67,6 +67,7 @@ if data is not None:
 # Window selection - moved outside the data check to be always active
 if data is not None:
     max_start_index_widths = max(0, (len(data) - 100) // 100) # Initial calculation with default window_width=100
+    # max_start_index_widths = max(0, (len(data) - window_width) // window_width) # Recalculate max_start_index_widths based on current window_width # REMOVE THIS LINE - using window_width from slider below
 
     col1_window, col2_window = st.columns(2) # Create columns for window sliders
 
@@ -80,11 +81,15 @@ if data is not None:
     ws = start_index_widths * window_width # Calculate window start based on multiplier and width
     ww = window_width
 
-
-    col1_debug, col2_debug, col3_debug = st.columns(3)
-    col1_debug.markdown(f"**Data Length:** {len(data)}")
-    col2_debug.markdown(f"**Window Width:** {window_width}")
-    col3_debug.markdown(f"**Max Start Index Widths:** {max_start_index_widths}")
+    # --- DEBUGGING OUTPUT ---
+    st.write("--- DEBUG WINDOW VALUES ---") # Separator for clarity
+    st.write("Data Length:", len(data))
+    st.write("Window Width (slider value):", window_width)
+    st.write("Max Start Index Widths:", max_start_index_widths)
+    st.write("Start Index Widths (slider value):", start_index_widths)
+    st.write("Calculated Window Start (ws):", ws)
+    st.write("Calculated Window Width (ww):", ww)
+    # --- END DEBUGGING OUTPUT ---
 
 
     if ws >= 0 and (ws + ww) <= len(data): # Check if window is within data bounds
