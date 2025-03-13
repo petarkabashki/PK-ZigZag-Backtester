@@ -81,6 +81,7 @@ if data is not None:
     ww = window_width
 
 
+# Put these in a table of 3 columns below the plot. AI!
     st.write("Data Length:", len(data)) # Debugging output
     st.write("Window Width:", window_width) # Debugging output
     st.write("Max Start Index Widths:", max_start_index_widths) # Debugging output
