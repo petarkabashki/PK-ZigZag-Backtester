@@ -90,8 +90,14 @@ if data is not None:
 
 
     if ws >= 0 and (ws + ww) <= len(data): # Check if window is within data bounds
+        st.write("--- WINDOW IN BOUNDS ---") # Debugging output: Window is in bounds
+        st.write(f"Condition: ws >= 0 and (ws + ww) <= len(data)")
+        st.write(f"Values: ws={ws}, ww={ww}, len(data)={len(data)}")
         wdata = data.iloc[ws:ws+ww].copy() # Adjusted to be inclusive of window_width
     else:
+        st.write("--- WINDOW OUT OF BOUNDS ---") # Debugging output: Window is out of bounds
+        st.write(f"Condition: NOT (ws >= 0 and (ws + ww) <= len(data))")
+        st.write(f"Values: ws={ws}, ww={ww}, len(data)={len(data)}")
         st.warning("Selected window is out of data bounds. Please adjust Start Window or Window Width.")
         wdata = pd.DataFrame() # Return empty dataframe to avoid errors
 
