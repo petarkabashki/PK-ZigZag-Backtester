@@ -3,3 +3,6 @@
 data
 .aider.*
 .aider*
+__pycache__
+.fuse*
+*.so

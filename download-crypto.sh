@@ -44,7 +44,7 @@ DATA_FORMAT="$DEFAULT_FORMAT"
 PAIRS="$DEFAULT_PAIR"          # Default to BTC
 TIMEFRAMES="$DEFAULT_TIMEFRAME"  # Default to 1w
 QUOTE_ASSET="$DEFAULT_QUOTE"
-CUSTOM_CONFIG=""
+CUSTOM_CONFIG="--prepend"
 
 while getopts ":p:t:s:e:x:f:c:q:" opt; do
     case $opt in
