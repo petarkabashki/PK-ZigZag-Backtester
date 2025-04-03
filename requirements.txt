@@ -1,0 +1,8 @@
+streamlit
+pandas
+plotly
+optuna
+matplotlib
+numpy
+seaborn
+yfinance

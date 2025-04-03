@@ -1,0 +1,4 @@
+Metadata-Version: 2.1
+Name: PKZigZagBacktesterExtensions
+Version: 0.1
+Summary: C extensions for ZigZag calculation and trade enumeration

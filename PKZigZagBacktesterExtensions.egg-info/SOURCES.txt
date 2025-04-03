@@ -1,0 +1,14 @@
+setup.py
+./lib/__init__.py
+./lib/backtesting.py
+./lib/indicators.py
+./lib/metrics.py
+./lib/optimization.py
+./lib/plotting.py
+./lib/util.py
+PKZigZagBacktesterExtensions.egg-info/PKG-INFO
+PKZigZagBacktesterExtensions.egg-info/SOURCES.txt
+PKZigZagBacktesterExtensions.egg-info/dependency_links.txt
+PKZigZagBacktesterExtensions.egg-info/top_level.txt
+lib/enumerate_trades.c
+lib/zigzag.c
